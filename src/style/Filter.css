@@ -1,0 +1,20 @@
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.checkbox {
+
+}
+
+.check-box-label {
+
+}

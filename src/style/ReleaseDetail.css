@@ -1,0 +1,95 @@
+.release-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.detail-cover-image {
+    margin: 10px 0;
+    height: 200px;
+    width: 200px;
+}
+
+#detail-title-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#detail-title {
+    font-size: 16px;
+    margin: 0;
+    width: 83% /* leave room for modal close button */
+}
+
+.detail-field {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.detail-field-label {
+    min-width: 80px;
+    margin: 0;
+    font-size: 14px;
+}
+
+.detail-field-text {
+    margin: 0;
+    font-size: 14px;
+    color: #CCCCCC;
+}
+
+.detail-heading {
+    margin: 20px 0 0 0;
+    font-size: 16px;
+}
+
+.detail-track-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.detail-track-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.detail-track-heading {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
+
+.detail-track-position {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
+
+.detail-track-title {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    color: #CCCCCC;
+}
+
+.detail-track-duration {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    color: #CCCCCC;
+}
