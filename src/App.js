@@ -1,12 +1,15 @@
-import React from 'react';
+import "./App.css";
+
+import React, { useState, useEffect } from 'react';
 
 import CollectionWall from "./component/CollectionWall";
 import CollectionList from "./component/CollectionList";
 import CollectionToolbar from "./component/CollectionToolbar";
+import ErrorMessage from "./component/ErrorMessage";
+import Footer from "./component/Footer";
+import Loading from "./component/Loading";
 import Modal from "./component/Modal";
 import ReleaseDetail from "./component/ReleaseDetail";
-// hooks
-// https://blog.logrocket.com/modern-api-data-fetching-methods-react/
 import { fetchCollection, fetchRelease } from './module/Api';
 import { sortModes, sortModeInitial, collectionStyleInitial } from "./module/Collection";
 
@@ -15,47 +18,54 @@ const collectionComponents = {
     List: CollectionList,
 };
 
-class App extends React.Component {
+const App = () => {
 
-    constructor(props) {
-        super(props);
+    const [ allReleases, setAllReleases ] = useState([]);
+    const [ filteredReleases, setFilteredReleases ] = useState([]);
+    const [ selectedRelease, setSelectedRelease ] = useState(null);
+    const [ sortMode, setSortMode ] = useState(sortModeInitial);
+    const [ collectionStyle, setCollectionStyle ] = useState(collectionStyleInitial);
+    const [ loadingCollection, setLoadingCollection ] = useState(true);
+    const [ error, setError ] = useState(null); 
 
-        this.state = {
-            allReleases: [],
-            filteredReleases: [],
-            selectedRelease: null,
-            sortCollection: sortModeInitial,
-            collectionStyle: collectionStyleInitial,
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const resp = await fetchCollection();
+                if(resp.error) {
+                    throw new Error(resp.error);
+                } else {
+                    setAllReleases(resp);
+                    setFilteredReleases(resp.sort(sortModes[sortModeInitial]));
+                    setError(null);
+                }
+            } catch(error) {
+                console.log(error)
+                setError(error.message);
+            } finally {
+                setLoadingCollection(false);
+            }
         };
 
-        this.onSearch = this.onSearch.bind(this);
-        this.onSortSelectChange = this.onSortSelectChange.bind(this);
-        this.onCollectionStyleSelect = this.onCollectionStyleSelect.bind(this);
-        this.selectRelease = this.selectRelease.bind(this);
-        this.closeViewReleaseModal = this.closeViewReleaseModal.bind(this);
-    }
+        fetchData();
+    }, []);
 
-    async componentDidMount() {
-        let resp = await fetchCollection();
+    const selectRelease = async (release) => {
+        let resp = await fetchRelease(release.id);
         if(resp.error) {
-            console.error("fetchCollection error", resp.error);
+            console.log(resp.error);
         } else {
-            let releases = resp.sort(sortModes[sortModeInitial]);
-
-            console.log(releases[0]);
-
-            this.setState({
-                allReleases: resp,
-                filteredReleases: releases,
-            });
+            console.log(resp);
+            setSelectedRelease(resp);
         }
     }
 
-    onSearch() {
+    const onSearch = () => {
         const searchField = document.getElementById("search-field");
         const searchTerm = searchField.value.toLowerCase();
 
-        const filteredReleases = this.state.allReleases.filter(release => {
+        const filteredReleases = allReleases.filter(release => {
             if(release.basic_information.title.toLowerCase().includes(searchTerm)) {
                 return true;
             }
@@ -75,74 +85,64 @@ class App extends React.Component {
             return false;
         });
 
-        this.setState({
-            filteredReleases: filteredReleases,
-        });
+        setFilteredReleases(filteredReleases);
     }
 
-    onSortSelectChange(value) {
-        let filteredReleases = this.state.filteredReleases.sort(sortModes[value]);
-        this.setState({
-            sortCollection: value,
-            filteredReleases: filteredReleases,
-        });
+    const onSortSelectChange = (value) => {
+        setSortMode(value);
+        setFilteredReleases(filteredReleases.sort(sortModes[value]));
     }
 
-    onCollectionStyleSelect(value) {
-        this.setState({collectionStyle: value});
+    const onCollectionStyleSelect = (value) => {
+        setCollectionStyle(value);
     }
 
-    async selectRelease(release) {
-        console.log("selectRelease", release.id)
-        let r = await fetchRelease(release.id);
-        if(r.error) {
-            console.log(r.error);
-        } else {
-            console.log(r);
-
-            this.setState({
-                selectedRelease: r,
-            });
-        }
+    const closeViewReleaseModal = () => {
+        setSelectedRelease(null);
     }
 
-    closeViewReleaseModal() {
-        this.setState({selectedRelease: null})
-    }
+    const CollectionComponent = collectionComponents[collectionStyle];
 
-    render() {
-        const CollectionComponent = collectionComponents[this.state.collectionStyle];
-
-        return(
-            <React.Fragment>
+    if(loadingCollection) {
+        return <Loading/>
+    } else {
+        return (
+            <div id="content">
                 <CollectionToolbar
-                    onSearch={this.onSearch}
-                    numItems={this.state.filteredReleases.length}
-                    sortCollection={this.state.sortCollection}
-                    onSortSelectChange={this.onSortSelectChange}
-                    collectionStyle={this.state.collectionStyle}
-                    onCollectionStyleSelect={this.onCollectionStyleSelect}
+                    onSearch={onSearch}
+                    numItems={filteredReleases.length}
+                    sortMode={sortMode}
+                    onSortSelectChange={onSortSelectChange}
+                    collectionStyle={collectionStyle}
+                    onCollectionStyleSelect={onCollectionStyleSelect}
                 />
-
-                <CollectionComponent
-                    releases={this.state.filteredReleases}
-                    selectRelease={this.selectRelease}
-                />
-
-                {this.state.selectedRelease !== null
+    
+                {error !== null
+                ?
+                    <ErrorMessage text={error}/>
+                :
+                    <CollectionComponent
+                        releases={filteredReleases}
+                        selectRelease={selectRelease}
+                    />
+                }
+    
+                {selectedRelease !== null
                 ?
                     <Modal
-                        handleClose={this.closeViewReleaseModal}
+                        handleClose={closeViewReleaseModal}
                     >
                         <ReleaseDetail
-                            release={this.state.selectedRelease}
+                            release={selectedRelease}
                         />
                     </Modal>
                     
                 :
                     null
                 }
-            </React.Fragment>
+
+                <Footer/>
+            </div>
         );
     }
 }

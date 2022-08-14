@@ -9,16 +9,19 @@ function getJSON(path) {
     return fetch(url, {
         method: "GET",
     }).then(response => {
+        if(!response.ok) {
+            throw new Error(`HTTP error ${response.status} ${response.statusText}`);
+        }
+
         const contentType = response.headers.get("content-type");
         if(contentType && contentType.includes("application/json")) {
             return response.json();
         } else {
-            throw new Error("");
+            throw new Error(`Invalid response content type "${contentType}"`);
         }
     }).then(data => {
         return data;
     }).catch(error => {
-        console.error(error);
         return {error: error};
     });
 }
