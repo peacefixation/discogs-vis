@@ -4,14 +4,13 @@ import Search from "./Search";
 import Select from "./Select";
 import RadioButtonGroup from "./RadioButtonGroup";
 import NumItems from "./NumItems";
-import { useViewport } from "./ViewportProvider"; 
+import { useViewport, widthBreakpoint } from "./ViewportProvider"; 
 import { sortModes, collectionStyles } from "../module/Collection";
 
 const CollectionToolbar = ({ onSearch, numItems, filterOptions, onFilterChange, onSortSelectChange, collectionStyle, onCollectionStyleSelect }) => {
     const { width } = useViewport();
-    const breakpoint = 620;
     
-    const containerStyle = width < breakpoint ? "collection-toolbar-compact" : 'collection-toolbar';
+    const containerStyle = width < widthBreakpoint ? "collection-toolbar-compact" : 'collection-toolbar';
 
     return(
         <div className={containerStyle}>

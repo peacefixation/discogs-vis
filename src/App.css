@@ -1,3 +1,5 @@
 #content {
-    margin: 20px;
+    flex: 1;
+    padding: 20px;
+    min-height: 261px; /* (toolbar 51) + (content 40 padding + 85*2 list items) */
 }

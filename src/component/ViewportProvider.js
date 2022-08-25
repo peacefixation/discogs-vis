@@ -38,3 +38,6 @@ export const useViewport = () => {
     const { width, height } = useContext(viewportContext);
     return { width, height };
 }
+
+// the width breakpoint to change layout
+export const widthBreakpoint = 620;

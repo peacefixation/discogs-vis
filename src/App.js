@@ -107,42 +107,43 @@ const App = () => {
         return <Loading/>
     } else {
         return (
-            <div id="content">
-                <CollectionToolbar
-                    onSearch={onSearch}
-                    numItems={filteredReleases.length}
-                    sortMode={sortMode}
-                    onSortSelectChange={onSortSelectChange}
-                    collectionStyle={collectionStyle}
-                    onCollectionStyleSelect={onCollectionStyleSelect}
-                />
-    
-                {error !== null
-                ?
-                    <ErrorMessage text={error}/>
-                :
-                    <CollectionComponent
-                        releases={filteredReleases}
-                        selectRelease={selectRelease}
+            <React.Fragment>
+                <div id="content">
+                    <CollectionToolbar
+                        onSearch={onSearch}
+                        numItems={filteredReleases.length}
+                        sortMode={sortMode}
+                        onSortSelectChange={onSortSelectChange}
+                        collectionStyle={collectionStyle}
+                        onCollectionStyleSelect={onCollectionStyleSelect}
                     />
-                }
     
-                {selectedRelease !== null
-                ?
-                    <Modal
-                        handleClose={closeViewReleaseModal}
-                    >
-                        <ReleaseDetail
-                            release={selectedRelease}
+                    {error !== null
+                    ?
+                        <ErrorMessage text={error}/>
+                    :
+                        <CollectionComponent
+                            releases={filteredReleases}
+                            selectRelease={selectRelease}
                         />
-                    </Modal>
-                    
-                :
-                    null
-                }
-
+                    }
+    
+                    {selectedRelease !== null
+                    ?
+                        <Modal
+                            handleClose={closeViewReleaseModal}
+                        >
+                            <ReleaseDetail
+                                release={selectedRelease}
+                            />
+                        </Modal>
+                        
+                    :
+                        null
+                    }
+                </div>
                 <Footer/>
-            </div>
+            </React.Fragment>
         );
     }
 }
